@@ -262,7 +262,7 @@ long double func_5_3(long double eps) {
     int n = 2;
     int l = 1;
 
-    while (1.0 / l > eps) {
+    while (1.0 / l * exp(1) > eps) {
         l += 1;
     }
 
