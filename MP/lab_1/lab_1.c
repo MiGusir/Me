@@ -1,34 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
+#include <ctype.h>
+#include <errno.h>
 
-// gcc lab_1.c -lm && ./a.out -p 12
+#define ERROUT stdout
+#define error(x) fprintf(ERROUT, "%s\n", x)
 
-static char *CommandNames[] = {
-    "-h",
-    "-p",
-    "-s",
-    "-e",
-    "-a",
-    "-f"
-};
+int is_flag(char* str) {
+    if (strlen(str) != 2) return 0;
+    char flags[6] = {'h', 'p', 's', 'e', 'a', 'f'};
+    if (str[0] != '-' && str[0] != '/') return 0;
+    for (int i = 0; i < 6; i += 1) { if (str[1] == flags[i]) return 1; }
+    return 0;
+}
 
-enum Command {
-    flag_h_enum,
-    flag_p_enum,
-    flag_s_enum,
-    flag_e_enum,
-    flag_a_enum,
-    flag_f_enum
-};
-
-int strcmp(const char *str1, const char *str2) {
-    while (*str1 && (*str1 == *str2)) {
+int strcmp(const char* str1, const char* str2) {
+    while ('\0' != *str1 && (*str1 == *str2)) {
         str1 += 1;
         str2 += 1;
     }
 
-    return *(unsigned char *)str1 - *(unsigned char *)str2;
+    return *(unsigned char*)str1 - *(unsigned char*)str2;
 }
 
 int flag_h(unsigned int value, unsigned long int* result) {
@@ -123,7 +117,7 @@ int flag_f(unsigned int value) {
 int main(int argc, char* argv[]) {
 
     if (argc != 3) {
-        printf("Передано неверное количество флагов\n");
+        error("Передано неверное количество флагов\n");
         return 0;
     }
 
@@ -133,77 +127,77 @@ int main(int argc, char* argv[]) {
     result[0] = 0;
     int res;
 
-    for (int i = flag_h_enum; i <= flag_f_enum; i += 1) {
-        if (!strcmp(argv[1], CommandNames[i])) {
-            switch (i) {
+    if (!is_flag(argv[1])) {
+        error("argv is_flag");
+        return 0;
+    }
+    char flag = argv[1][1];
 
-                case flag_h_enum:
+    switch (flag) {
 
-                    res = flag_h(value, result);
+        case 'h':
 
-                    if (res) {
-                        for (int i = 1; i <= result[0]; i += 1) {
-                            printf("%ld ", result[i]);
-                        }
-                        printf("\n");
-                    } else {
-                        printf("Числа отсутствуют\n");
-                    }
-                    break;
+            res = flag_h(value, result);
 
-                case flag_p_enum:
-
-                    res = flag_p(value);
-                    if (res == 1) {
-                        printf("Числo простое\n");
-                    } else if (!res) {
-                        printf("Числo составное\n");
-                    } else {
-                        printf("Числo не простое и не составное\n");
-                    }
-                    break;
-
-                case flag_s_enum:
-                    
-                    res = flag_s(value, result);
-                    for (int i = result[0]; i != 0; i -= 1) {
-                        printf("%ld ", result[i]);
-                    }
-                    printf("\n");
-                    break;
-                
-                case flag_e_enum:
-                    res = flag_e(value, result);
-
-                    if (res) {
-                        for (int i = 1; i <= result[0]; i += 1) {
-                            if ((i - 1) % value == 0 && i > 1) {
-                                printf("\n");
-                            }
-                            printf("%ld ", result[i]);
-                        }
-                        printf("\n");
-                    } else {
-                        printf("Введено число большее 10\n");
-                    }
-                    break;
-
-                case flag_a_enum:
-                    res = flag_a(value);
-                    printf("%d\n", res);
-                    break;
-
-                case flag_f_enum:
-                    res = flag_f(value);
-                    printf("%d\n", res);
-                    break;
-
-                default:
-                    printf("Флаг отсутствует\n");
-                    break;
-
+            if (res) {
+                for (int i = 1; i <= result[0]; i += 1) {
+                    printf("%ld ", result[i]);
+                }
+                printf("\n");
+            } else {
+                printf("Числа отсутствуют\n");
             }
-        }
+            break;
+
+        case 'p':
+
+            res = flag_p(value);
+            if (res == 1) {
+                printf("Числo простое\n");
+            } else if (!res) {
+                printf("Числo составное\n");
+            } else {
+                printf("Числo не простое и не составное\n");
+            }
+            break;
+
+        case 's':
+            
+            res = flag_s(value, result);
+            for (int i = result[0]; i != 0; i -= 1) {
+                printf("%ld ", result[i]);
+            }
+            printf("\n");
+            break;
+        
+        case 'e':
+            res = flag_e(value, result);
+
+            if (res) {
+                for (int i = 1; i <= result[0]; i += 1) {
+                    if ((i - 1) % value == 0 && i > 1) {
+                        printf("\n");
+                    }
+                    printf("%ld ", result[i]);
+                }
+                printf("\n");
+            } else {
+                printf("Введено число большее 10\n");
+            }
+            break;
+
+        case 'a':
+            res = flag_a(value);
+            printf("%d\n", res);
+            break;
+
+        case 'f':
+            res = flag_f(value);
+            printf("%d\n", res);
+            break;
+
+        default:
+            break;
     }
 
     free(result);

@@ -67,8 +67,6 @@ void flag_a(FILE* from, FILE* to) {
     }
 }
 
-// memcpy
-
 void renam(char* name, char* renm) {
     char out[] = "out_";
     int i;
@@ -165,7 +163,7 @@ int main(int argc, char* argv[]) {
                         return 0;
                     }
                     flag_d(file_from, file_to_out);
-                    break;
+                    return 0;
 
                 case flag_nd_enum:
 
@@ -174,7 +172,7 @@ int main(int argc, char* argv[]) {
                         return 0;
                     }
                     flag_d(file_from, file_to);
-                    break;
+                    return 0;
 
                 case flag_i_enum:
 
@@ -183,7 +181,7 @@ int main(int argc, char* argv[]) {
                         return 0;
                     }
                     flag_i(file_from, file_to_out);
-                    break;
+                    return 0;
 
                 case flag_ni_enum:
 
@@ -192,7 +190,7 @@ int main(int argc, char* argv[]) {
                         return 0;
                     }
                     flag_i(file_from, file_to);
-                    break;
+                    return 0;
                 
                 case flag_s_enum:
                     
@@ -201,7 +199,7 @@ int main(int argc, char* argv[]) {
                         return 0;
                     }
                     flag_s(file_from, file_to_out);
-                    break;
+                    return 0;
 
                 case flag_ns_enum:
 
@@ -210,7 +208,7 @@ int main(int argc, char* argv[]) {
                         return 0;
                     }
                     flag_s(file_from, file_to);
-                    break;
+                    return 0;
 
                 case flag_a_enum:
 
@@ -219,7 +217,7 @@ int main(int argc, char* argv[]) {
                         return 0;
                     }
                     flag_a(file_from, file_to);
-                    break;
+                    return 0;
 
                 case flag_na_enum:
 
@@ -228,11 +226,11 @@ int main(int argc, char* argv[]) {
                         return 0;
                     }
                     flag_a(file_from, file_to);
-                    break;
+                    return 0;
 
                 default:
                     printf("Флаг отсутствует\n");
-                    break;
+                    return 0;
 
             }
 
@@ -245,6 +243,6 @@ int main(int argc, char* argv[]) {
         }
     }
 
-
+    printf("Флаг отсутствует\n");
     return 0;
 }

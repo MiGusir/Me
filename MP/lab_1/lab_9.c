@@ -43,7 +43,6 @@ int main(int argc, char* argv[]) {
     srand(time(0));
 
     if (argc != 3 || atoi(argv[2]) < atoi(argv[1])) {
-        // проверка на введенные wf hf
         printf("Ошибка переданного диапозона\n");
         return 0;
     }

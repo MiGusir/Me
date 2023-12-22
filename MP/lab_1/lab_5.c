@@ -1,81 +1,83 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
-unsigned long long int fact(int a) {
-    unsigned long long int res = 1;
-    for (int i = 2; i <= a; i += 1) {
-        res *= i;
+int is_digit(char *number) {
+    if (!strcmp(number, "-")) return 0;
+    if (*number == '-') number += 1;
+    while (*number != '\0') {
+        if (!(*number >= '0' && *number <= '9')) return 0;
+        number += 1;
     }
-    return res;
+    return 1;
 }
 
-unsigned long long int fact_fact(int a) {
-    unsigned long long int res = 1;
-    for (int i = 3; i <= a; i += 2) {
-        res *= i;
+int is_double(char* number) {
+    int c = 0;
+    if (strcmp(number, "-") == 0) return 0;
+    while (*number != '\0') {
+        if (*number == '.') {
+            if (c == 0) c += 1;
+            else return 0;
+        }
+        else if (!(*number >= '0' && *number <= '9')) return 0;
+        number += 1;
     }
-    return res;
+    return 1;
 }
 
-long double func_a(long double eps, long double x) {
-    long double sum = 1.0;
-    long double sum_next = 1.0;
-    int n = 1;
-
-    while (sum_next > eps) {
-        sum_next *= x / n;
-        sum += sum_next;
+double func_a(double eps, double x) {
+    double n = 1.0;
+    double sum = 1.0 + x, element = x;
+    do {
+        element *= x / (n + 1.0);
+        sum += element;
         n += 1;
-    }
-
+    } while (fabs(element) > eps);
     return sum;
 }
 
-long double func_b(long double eps, long double x) {
-    long double sum = 1.0;
-    long double sum_next = 1.0;
-    int n = 1;
-
-    while (sum_next > eps) {
-        sum_next *= -1.0 * powl(x, 2) / ((2 * n) * (2 * n - 1));
-        sum += sum_next;
+double func_b(double eps, double x) {
+    double n = 1.0;
+    double sum = 1.0 - ((x * x) / 2.0), element = sum - 1.0;
+    do {
+        element *= ((-1.0) * x * x) / ((2.0 * n + 2.0) * (2.0 * n + 1.0));
+        sum += element;
         n += 1;
-    }
-
+    } while (fabs(element) > eps);
     return sum;
 }
 
-long double func_c(long double eps, long double x) {
-    long double sum = 1.0;
-    long double sum_next = 1.0;
-    int n = 1;
 
-    while (sum_next > eps) {
-        sum_next *= 27 * pow(n, 3) * pow(x, 2) / (n + 2) / (n + 1) / n;
-        sum += sum_next;
+double func_c(double eps, double x) {
+    double n = 1.0;
+    double sum = 1.0 + ((9.0 * x * x) / 2.0), element = ((9.0 * x * x) / 2.0);
+    do {
+        element *= (9.0 * (n + 1.0) * (n + 1.0) * x * x) / ((3.0 * n + 2.0) * (3.0 * n + 1.0));
+        sum += element;
         n += 1;
-    }
-
+    } while (fabs(element) > eps);
     return sum;
 }
 
-// неправильно считает c при x = 0.5 y = 2.9
-// неправильно считает d при x = 0.5 y = -1...
-
-
-long double func_d(long double eps, long double x) {
-    long double sum = 1.0;
-    long double term = 1.0;
-    int n = 1;
-
-    while (term > eps) {
-        term *= -1 * pow(x, 2) / ((2 * n + 2) * (2 * n + 1));
-        sum += term;
-        n++;
-    }
-
+double func_d(double eps, double x) {
+    double n = 1.0;
+    double sum = ((-1.0) * x * x) / 2.0, element = sum;
+    do {
+        element *= ((-1.0) * (2.0 * n + 1.0) * x * x) / (2.0 * n + 2.0);
+        sum += element;
+        n += 1;
+    } while (fabs(element) > eps);
     return sum;
+}
+
+int is_epsilon(char* eps) {
+    if (is_double(eps)) {
+        float result = atof(eps);
+        if (result > 0 && result <= 1) return 1;
+    }
+    return 0;
 }
 
 int main(int argc, char* argv[]) {
@@ -85,12 +87,12 @@ int main(int argc, char* argv[]) {
         return 0;
     }
     
-    long double epsilon = atof(argv[1]);
-
-    if (epsilon <= 0.0){
-        printf("Слишком малый эпсилон\n");
-        return 1;
+    if (!is_epsilon(argv[1])) {
+        printf("Невалидный эпсилон\n");
+        return 0;
     }
+
+    long double epsilon = atof(argv[1]);
 
     int eps_n = 0;
     while (epsilon < 1) {
@@ -101,10 +103,10 @@ int main(int argc, char* argv[]) {
     epsilon = atof(argv[1]);
     long double x = 0.5;
 
-    printf("a) %.*Lf\n", eps_n, func_a(epsilon, x));
-    printf("b) %.*Lf\n", eps_n, func_b(epsilon, x));
-    printf("c) %.*Lf\n", eps_n, func_c(epsilon, x));
-    printf("d) %.*Lf\n", eps_n, func_d(epsilon, x));
+    printf("a) %.*f\n", eps_n, func_a(epsilon, x));
+    printf("b) %.*f\n", eps_n, func_b(epsilon, x));
+    printf("c) %.*f\n", eps_n, func_c(epsilon, x));
+    printf("d) %.*f\n", eps_n, func_d(epsilon, x));
 
     return 0;
 }
