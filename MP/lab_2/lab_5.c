@@ -638,7 +638,8 @@ int oversprintf(char *stream, const char *format, ...) {
 int main() {
     int num = 955;
     overfprintf(stdout, "qwq %s %d %+.4f %Ro %Zr %Cv %CV %to %TO %mu / %mi / %md / %mf\n", "fas", num, 1.123456, num, 54, 10, 3, 13, 16, "a23", 16, "A23", 16, 35, 35, 1.12, 1.12);
-
+    overfprintf(stdout, "\n %Ro %Zr \n", 1240, 5);
+    //overfprintf(stdout, "\n%n\n");
     char str[300];
     str[0] ='\0';
     oversprintf(str, "qwq %s %d %+.4f %Ro %Zr %Cv %CV %to %TO %mu / %mi / %md / %mf\n", "fas", num, 1.123456, num, 54, 10, 3, 13, 16, "a23", 16, "A23", 16, 35, 35, 1.12, 1.12);

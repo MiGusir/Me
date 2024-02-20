@@ -49,7 +49,7 @@ int have_to_base(int base, int count, ...) {
 
 int main() {
 
-    have_to_base(11, 3, 0.000009, 1.0, 0.43);
+    have_to_base(10, 3, 0.000009, 1.0, 0.05);
 
     return 0;
 }

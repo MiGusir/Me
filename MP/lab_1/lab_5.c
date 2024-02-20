@@ -3,29 +3,8 @@
 #include <math.h>
 #include <string.h>
 
-int is_digit(char *number) {
-    if (!strcmp(number, "-")) return 0;
-    if (*number == '-') number += 1;
-    while (*number != '\0') {
-        if (!(*number >= '0' && *number <= '9')) return 0;
-        number += 1;
-    }
-    return 1;
-}
-
-int is_double(char* number) {
-    int c = 0;
-    if (strcmp(number, "-") == 0) return 0;
-    while (*number != '\0') {
-        if (*number == '.') {
-            if (c == 0) c += 1;
-            else return 0;
-        }
-        else if (!(*number >= '0' && *number <= '9')) return 0;
-        number += 1;
-    }
-    return 1;
-}
+#define is_double(x) strtod(x, NULL)
+#define is_int(x) strtol(x, NULL, 10)
 
 double func_a(double eps, double x) {
     double n = 1.0;
@@ -92,15 +71,10 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    long double epsilon = atof(argv[1]);
+    long double epsilon = is_double(argv[1]);
 
-    int eps_n = 0;
-    while (epsilon < 1) {
-        eps_n += 1;
-        epsilon *= 10;
-    }
-    
-    epsilon = atof(argv[1]);
+    int eps_n = 5;
+    epsilon = is_double(argv[1]);
     long double x = 0.5;
 
     printf("a) %.*f\n", eps_n, func_a(epsilon, x));

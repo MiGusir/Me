@@ -6,9 +6,8 @@
 #include <stdarg.h>
 #include <string.h>
 
-enum Status {GOOD_ERROR, BAD_MEANS_ERROR, FILE_ERROR};
 
-void add_numbers_in_base(int base, char* result, const char* number) {
+void addNumbers(int base, char* result, const char* number) {
 
 
     char HexSymbols[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -66,7 +65,7 @@ void strrev(char* str)
     }
 }
 
-char* sum_in_base(int base, int count, ...) {
+char* sumNumbers(int base, int count, ...) {
     va_list numbers;
     va_start(numbers, count);
 
@@ -90,10 +89,8 @@ char* sum_in_base(int base, int count, ...) {
             return NULL;
             }
         }
-
-        // printf("%s %s\n", result, number);
         
-        add_numbers_in_base(base, result, number);
+        addNumbers(base, result, number);
     }
 
     va_end(numbers);
@@ -111,79 +108,9 @@ char* sum_in_base(int base, int count, ...) {
 }
 
 int main() {
-
-    char* result1 = sum_in_base(2, 3, "1010", "10", "101");
-    printf("Результат: %s\n", result1);
-    free(result1);
-
-    char* result2 = sum_in_base(10, 3, "012", "012", "000112");
-    printf("Результат: %s\n", result2);
-    free(result2);
-
-    char* result3 = sum_in_base(16, 3, "F", "1", "A1");
-    printf("Результат: %s\n", result3);
-    free(result3);
+    char* result = sumNumbers(10, 3, "123", "251", "145");
+    printf("%s\n", result);
+    free(result);
 
     return 0;
 }
-
-// #include <stdio.h>
-// #include <stdarg.h>
-// #include <stdbool.h>
-// #include <string.h>
-
-// int sum(int base, int count, ...) {
-//     va_list args;
-//     va_start(args, count);
-
-//     int result = 0;
-
-//     for (int i = 0; i < count; i++) {
-//         const char* num_str = va_arg(args, const char*);
-        
-//         // Преобразование строки в число в заданной системе счисления
-//         int num = 0;
-//         int len = strlen(num_str);
-//         int multiplier = 1;
-        
-//         for (int j = len - 1; j >= 0; j--) {
-//             char digit = num_str[j];
-//             int value;
-            
-//             if (digit >= '0' && digit <= '9') {
-//                 value = digit - '0';
-//             } else if (digit >= 'A' && digit <= 'Z') {
-//                 value = 10 + digit - 'A';
-//             } else if (digit >= 'a' && digit <= 'z') {
-//                 value = 10 + digit - 'a';
-//             } else {
-//                 // Некорректный символ - пропускаем число
-//                 break;
-//             }
-            
-//             if (value >= base) {
-//                 // Некорректная цифра - пропускаем число
-//                 break;
-//             }
-            
-//             // Умножаем цифру на текущий разряд
-//             num += value * multiplier;
-//             multiplier *= base;
-//         }
-        
-//         result += num;
-//     }
-
-//     va_end(args);
-//     return result;
-// }
-
-// int main() {
-//     int sum1 = sum(10, 3, "12", "000000012", "0");
-//     printf("Сумма: %d\n", sum1);
-
-//     int sum2 = sum(16, 2, "A", "B");
-//     printf("Сумма: %d\n", sum2);
-
-//     return 0;
-// }

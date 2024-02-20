@@ -52,7 +52,7 @@ int find_min_base(char* number) {
 
 int main(int argc, char *argv[]) {
     if (argc < 3) {
-        printf("Передано неверное количество флагов\n");
+        printf("Usage: %s input_file output_file\n", argv[0]);
         return 1;
     }
 
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
     FILE *output = fopen(output_file, "w");
 
     if (input == NULL || output == NULL) {
-        printf("Ошибка открытия файла\n");
+        printf("Failed to open file\n");
         return 1;
     }
 

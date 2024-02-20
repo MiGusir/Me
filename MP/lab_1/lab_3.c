@@ -5,8 +5,8 @@
 #include <ctype.h>
 #include <errno.h>
 
-#define ERROUT stdout
-#define error(x) fprintf(ERROUT, "%s: fail\n", x)
+#define is_double(x) strtod(x, NULL)
+#define is_int(x) strtol(x, NULL, 10)
 
 int is_flag(char* str) {
     if (strlen(str) != 2) return 0;
@@ -29,10 +29,10 @@ int flag_q(float eps, float x, float y, float z, float* res) {
         if (discriminant < 0){
             
         }
-        else if(discriminant == 0){
+        else if(discriminant == 0 && a > eps){
             res[count] = -b / (2 * a);
             count += 1;
-        } else {
+        } else if (a > eps) {
             res[count] = (-b + sqrt(discriminant)) / (2 * a);
             count += 1;
             res[count] = (-b - sqrt(discriminant)) / (2 * a);
@@ -52,7 +52,6 @@ int flag_q(float eps, float x, float y, float z, float* res) {
             }
         }
     }
-
     return count;
 }
 
@@ -73,7 +72,7 @@ int flag_t(float eps, float a, float b, float c) {
 int main(int argc, char *argv[]) {
     
     if (!is_flag(argv[1])) {
-        error("argv is_flag");
+        printf("Неверный флаг\n");
         return 0;
     }
     char flag = argv[1][1];
@@ -94,8 +93,13 @@ int main(int argc, char *argv[]) {
                 printf("Передано неверное количество флагов\n");
                 break;
             }
+            // if (not (is_double(argv[2]) && is_double(argv[3]) && is_double(argv[4]) && is_double(argv[5]))) {
+            //     printf("Переданы не валидные аргументы\n");
+            //     break;
+            // }
 
-            res = flag_q(atof(argv[2]), atof(argv[3]), atof(argv[4]), atof(argv[5]), mas);
+            res = flag_q(is_double(argv[2]), is_double(argv[3]), is_double(argv[4]), is_double(argv[5]), mas);
+
             for(int i = 0; i < res; i += 1) {
                 printf("%f ", mas[i]);
             }
@@ -110,8 +114,13 @@ int main(int argc, char *argv[]) {
                 printf("Передано неверное количество флагов\n");
                 break;
             }
+            // if (not (is_int(argv[2]) && is_int(argv[3]))) {
+            //     printf("Переданы не валидные аргументы\n");
+            //     break;
+            // }
 
-            res = flag_m(atoi(argv[2]), atoi(argv[3]));
+            res = flag_m(is_int(argv[2]), is_int(argv[3]));
+
             if (res) {
                 printf("Кратно\n");
             } else {
@@ -126,12 +135,13 @@ int main(int argc, char *argv[]) {
                 printf("Передано неверное количество флагов\n");
                 break;
             }
-            if (atof(argv[2]) >= 1) {
-                printf("Некорректный эпсилое\n");
-                break;
-            }
+            // if (not (is_double(argv[2]) && is_double(argv[3]) && is_double(argv[4]) && is_double(argv[5]))) {
+            //     printf("Переданы не валидные аргументы\n");
+            //     break;
+            // }
 
-            res = flag_t(atof(argv[2]), atof(argv[3]), atof(argv[4]), atof(argv[5]));
+            res = flag_t(is_double(argv[2]), is_double(argv[3]), is_double(argv[4]), is_double(argv[5]));
+
             if (res) {
                 printf("Могут\n");
             } else {

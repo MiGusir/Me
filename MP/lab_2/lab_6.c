@@ -1,343 +1,376 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
-#include <time.h>
-#include <math.h>
 #include <stdarg.h>
 #include <string.h>
+#include <ctype.h>
 
-enum Status {GOOD_ERROR, BAD_MEANS_ERROR, FILE_ERROR};
+enum Status{
+    SUCCESS = 0,
+    WRONG_INPUT = -1,
+    ERROR_OF_FILE = -2,
+    ERROR_OF_MEMORY = -3,
+    ERROR = -4
+};
 
-void strrev(char* str)
-{
-    if (!str) {
-        return;
+int VariousRoman(char symbol){
+    switch(symbol){
+        case 'I': return 1;
+        case 'V': return 5;
+        case 'X': return 10;
+        case 'L': return 50;
+        case 'C': return 100;
+        case 'D': return 500;
+        case 'M': return 1000;
     }
-    int i = 0;
-    int j = strlen(str) - 1;
- 
-    while (i < j) {
-        char c = str[i];
-        str[i] = str[j];
-        str[j] = c;
-        i++;
-        j--;
-    }
+    return 0;
 }
 
-int roman_to_int(const char* roman) {
-    int len = strlen(roman);
+int FromRoman(char * string){
     int result = 0;
-    int prev_value = 0;
-
-    for (int i = len - 1; i >= 0; i--) {
-        char c = roman[i];
-        int value = 0;
-
-        switch (c) {
-            case 'I':
-                value = 1;
-                break;
-            case 'V':
-                value = 5;
-                break;
-            case 'X':
-                value = 10;
-                break;
-            case 'L':
-                value = 50;
-                break;
-            case 'C':
-                value = 100;
-                break;
-            case 'D':
-                value = 500;
-                break;
-            case 'M':
-                value = 1000;
-                break;
-            default:
-                return 0; // некорректная римская цифра
-        }
-
-        if (value >= prev_value) {
-            result += value;
-        } else {
+    int value;
+    for (int i = 0; string[i] != '\0'; i++){
+        value = VariousRoman(string[i]);
+        if (value < VariousRoman(string[i + 1])){
             result -= value;
-        }
-
-        prev_value = value;
+        } 
+        else{
+            result += value;
+        } 
     }
-
     return result;
 }
 
-void toZeckendorf(unsigned int n, char* result, int* len) {
-    if (n == 0) {
-        strcpy(result, "0");
-        return;
+unsigned int FromZeckendorf(char * string){
+    int length = strlen(string);
+    unsigned int result = 0;
+    unsigned int current = 1, prev = 1, next = 1;
+    for (int i = 0; i < length - 1; i++){
+        current = next;
+        if (string[i] == '1'){
+            result += current;
+        } 
+		next = current + prev;
+        prev = current;
     }
+    return result;
+}
 
-    int fib[32];
-    fib[0] = 1;
-    fib[1] = 2;
+int ToDecimal(char* number, int base){
+    int result = 0;
+    int flag = 0;
+    char * ptr = number - 1;
+    if (*(++ptr) == '-'){
+        flag = 1;
+    } 
+    else{
+        --ptr;
+    } 
 
-    for (int i = 2; i < 32; i += 1) {
-        fib[i] = fib[i - 1] + fib[i - 2];
+    while (*(++ptr)){
+        result = result * base + (isdigit(*ptr) ? *ptr - '0' : tolower(*ptr) - 'a' + 10);
     }
+    if (flag == 1){
+        result *= -1;
+    } 
+    return result;
+}
 
-    int i = 31;
-    int poz = 0;
-    int length = 0;
-    while (i >= 0) {
+int CheckFlag(char * flag){
+    char * flags[] = {"Ro", "Zr", "Cv", "CV"};
+    int size = sizeof(flags) / sizeof(flags[0]);
 
-        if (poz == (*len - 2)) {
-            *len *= 2;
-            if ((result = (char*)realloc(result, sizeof(char) * *len)) == NULL) {
-                return;
+    for (int i = 0; i < size; i++){
+        if (!strcmp(flag, flags[i])){
+            return SUCCESS;
+        } 
+    }
+    return ERROR;
+}
+
+int GetString(FILE * file, char ** string){
+    int length = 2;
+    *string = (char*)malloc(length * sizeof(char));
+    if (*string == NULL){
+        return ERROR_OF_MEMORY;
+    } 
+    char * temp;
+    int count = 0;
+    char symbol = fgetc(file);
+
+    while (symbol == ' ' || symbol == '\n' || symbol == ',' || symbol == '\t'){
+        symbol = fgetc(file);
+    } 
+
+    while (symbol != ' ' && symbol != '\n' && symbol != ',' && symbol != '\t' && symbol != EOF){
+        if (length <= count){
+            length *= 2;
+            temp = (char*)realloc(*string, length * sizeof(char));
+            if (temp == NULL){
+                free(string);
+                string = NULL;
+                return ERROR_OF_MEMORY;
+            }
+            *string = temp;
+        }
+        (*string)[count] = symbol;
+        count += 1;
+        symbol = fgetc(file);
+    }
+    (*string)[count] = '\0';
+    return SUCCESS;
+}
+
+int Flags(FILE * file, char * flag, va_list * args){
+    int num, base;
+    unsigned int num2;
+    int * res;
+    unsigned int * res2;
+    unsigned int zeckendorf;
+    char * string = NULL;
+    num = GetString(file, &string);
+    if (num == ERROR_OF_MEMORY){
+        return num;
+    } 
+    switch(flag[0]){
+        case 'R':
+            res = va_arg(*args, int*);
+            num = FromRoman(string);
+            *res = num;
+            break;
+        case 'Z':
+            res2 = va_arg(*args, unsigned int*);
+            num2 = FromZeckendorf(string);
+            *res2 = num2;
+            break;
+        case 'C':
+            res = va_arg(*args, int*);
+            base = va_arg(*args, int);
+            if (!(base >= 2 && base <= 36)){
+                base = 10;
+            } 
+            num = ToDecimal(string, base);
+            *res = num;
+            break;
+        default:
+            break;
+    }
+    free(string);
+    string = NULL;
+    return SUCCESS;
+}
+
+int oversscanf(char * buffer, const char * format, ...){
+    int len = strlen(buffer);
+    if (len == 0){
+        return 0;
+    } 
+
+    FILE * copy = tmpfile();
+    if (!copy){
+        return ERROR_OF_FILE;
+    } 
+    int i = 0;
+    while (buffer[i] != '\0'){
+        fputc(buffer[i], copy);
+        i += 1;
+    }
+    rewind(copy);
+
+    va_list arguments;
+    va_start(arguments, format);
+    int length = strlen(format);
+    char * string = (char*)format;
+    char * temp = (char*)malloc((length + 1) * sizeof(char));
+    if (temp == NULL){
+        va_end(arguments);
+        return ERROR_OF_MEMORY;
+    }
+    for (int i = 0; i <= length; i++){
+        temp[i] = 0;
+    } 
+    char current_flag[] = {'1', '1', '\0'};
+    int count = 0;
+    int temp_count = 0;
+    int result;
+    void * empty_flag;
+    for (int i = 0; i < length; i++){
+        if (format[i] == '%'){
+            current_flag[0] = format[i + 1];
+            current_flag[1] = format[i + 2];
+            if (CheckFlag(current_flag) == SUCCESS){
+                if (temp_count != 0){
+                    temp[temp_count] = 0;
+                    result = vfscanf(copy, temp, arguments);
+                    if (result == EOF){
+                        free(temp);
+                        temp = NULL;
+                        return ERROR;
+                    }
+                    count += result;
+                    for (int j = 0; j < result; j++){
+                        empty_flag = va_arg(arguments, void*);
+                    } 
+                }
+                result = Flags(copy, current_flag, &arguments);
+                count += 1;
+                if (result == ERROR_OF_MEMORY){
+                    free(temp);
+                    temp = NULL;
+                    return result;
+                }
+
+                for (int j = 0; j <= length; ++j){
+                    temp[j] = 0;
+                } 
+                temp_count = 0;
+                i += 3;
             }
         }
-
-        if (n >= fib[i]) {
-            result[poz] = '1';
-            n -= fib[i];
-            length += 1;
-            poz += 1;
-        } else if (length > 0) {
-            result[poz] = '0';
-            poz += 1;
-        }        
-        i -= 1;
+        temp[temp_count] = format[i];
+        temp_count += 1;
     }
-
-    result[poz] = '\0';
-    strrev(result);
-    result[poz] = '1';
-    result[poz + 1] = '\0';
-    return;
-}
-
-int from_to_10(char* num, int base) {
-    int res = 0;
-    char* ptr = num;
-    if (*ptr == '-') {
-        ptr += 1;
-    }
-    while (*ptr) {
-        if (isdigit(*ptr) || isalpha(*ptr)) {
-            res = res * base + (isdigit(*ptr) ? *ptr - '0' : *ptr - 'a' + 10);
+    if (temp_count != 0){
+        temp[temp_count] = 0;
+        result = vfscanf(copy, temp, arguments);
+        if (result < 0){
+            free(temp);
+            temp = NULL;
+            return ERROR;
         }
-        ptr += 1;
+        count += result;
     }
-    return res;
+    free(temp);
+    temp = NULL;
+
+    fclose(copy);
+    remove("tmpfile");
+
+    va_end(arguments);
+    return count;
 }
 
-int from_to_10_big(char* num, int base) {
-    int res = 0;
-    char* ptr = num;
-    if (*ptr == '-') {
-        ptr += 1;
+int overfscanf(FILE * file, const char * format, ...){
+    va_list arguments;
+    va_start(arguments, format);
+    int length = strlen(format);
+    char * string = (char*)format;
+    char * temp = (char*)malloc((length + 1) * sizeof(char));
+    if (temp == NULL){
+        va_end(arguments);
+        return ERROR_OF_MEMORY;
     }
-    while (*ptr) {
-        if (isdigit(*ptr) || isalpha(*ptr)) {
-            res = res * base + (isdigit(*ptr) ? *ptr - '0' : *ptr - 'A' + 10);
+    for (int i = 0; i <= length; i++){
+        temp[i] = 0;
+    } 
+    char flag[] = {'1', '1', '\0'};
+    int count = 0;
+    int temp_count = 0;
+    int result;
+    void * empty_flag;
+    for (int i = 0; i < length; i++){
+        if (format[i] == '%'){
+            flag[0] = format[i + 1];
+            flag[1] = format[i + 2];
+            if (CheckFlag(flag) == SUCCESS){
+                if (temp_count != 0){
+                    temp[temp_count] = 0;
+                    result = vfscanf(file, temp, arguments);
+                    if (result == EOF){
+                        free(temp);
+                        temp = NULL;
+                        return ERROR;
+                    }
+                    count += result;
+                    for (int j = 0; j < result; j++){
+                        empty_flag = va_arg(arguments, void*);
+                    } 
+                }
+                result = Flags(file, flag, &arguments);
+                count += 1;
+                if (result == ERROR_OF_MEMORY){
+                    free(temp);
+                    temp = NULL;
+                    return result;
+                }
+
+                for (int j = 0; j <= length; j++){
+                    temp[j] = 0;
+                } 
+                temp_count = 0;
+                i += 3;
+            }
         }
-        ptr += 1;
+        temp[temp_count] = format[i];
+        temp_count += 1;
     }
-    return res;
-}
-
-void from_10_to(int num, int base, char* bufer, int* len) {
-    int r;
-    int poz = 0;
-    if (poz == (*len - 2)) {
-        *len *= 2;
-        if ((bufer = (char*)realloc(bufer, sizeof(char) * *len)) == NULL) {
-            return;
+    if (temp_count != 0){
+        temp[temp_count] = 0;
+        result = vfscanf(file, temp, arguments);
+        if (result < 0){
+            free(temp);
+            temp = NULL;
+            return ERROR;
         }
+        count += result;
     }
-    while (num > 0) {
-        r = num % base;
-        bufer[poz] = (r > 9) ? r - 10 + 'a' : r + '0';
-        poz += 1;
-        num /= base;
-    }
+    free(temp);
+    temp = NULL;
 
-    bufer[poz] = '\0';
-    strrev(bufer);
-    bufer[poz] = '\0';
-    return;
+    va_end(arguments);
+    return count;
 }
 
-int overfscanf(FILE* stream, const char* format, ...) {
-    va_list args;
-    va_start(args, format);
-    
-    int written = 0;
-    const char* p = format;
-    char f;
-    char* buf;
-    int len = 16;
-    int poz = 0;
-    
-    while (*p != '\0') {
-        f = fgetc(stream);
-        fprintf("%c", f);
-        p += 1;
-
-//         if (*p != '%') {
-
-//             if (*p != )
-//             p += 1;
-
-//         } else if (*p == '%' && *(p + 1) == 'R' && *(p + 2) == 'o') {
-
-//             p += 3;
-//             char* arg = va_arg(args, char*);
-//             char roman[10]; // болше 3999 чисел нет
-//             int result = roman_to_int(arg);
-//             // int result = fputs(roman, stream);
-//             if (result < 0) {
-//                 return result;
-//             }
-//             written += result;
-
-//         } else if (*p == '%' && *(p + 1) == '%') {
-
-//             fputc(*p, stream);
-//             p += 2;
-//             written += 1;
-
-//         } else if (*p == '%' && *(p + 1) == 'Z' && *(p + 2) == 'r') {
-
-//             p += 3;
-//             int arg = va_arg(args, int);
-//             if ((buf = (char*)malloc(sizeof(char) * len)) == NULL) {
-//                 return 0;
-//             }
-//             toZeckendorf(arg, buf, &len);
-//             int result = fputs(buf, stream);
-//             if (result < 0) {
-//                 return result;
-//             }
-//             written += result;
-//             free(buf);
-            
-//         }  else if (*p == '%' && *(p + 1) == 'C' && *(p + 2) == 'v') {
-
-//             p += 3;
-//             int arg = va_arg(args, int);
-//             int base = va_arg(args, int);
-//             if (base > 26 || base < 2) {
-//                 base = 10;
-//             }
-//             if ((buf = (char*)malloc(sizeof(char) * len)) == NULL) {
-//                 return 0;
-//             }
-            
-//             from_10_to(arg, base, buf, &len);
-//             int result = fputs(buf, stream);
-//             if (result < 0) {
-//                 return result;
-//             }
-//             written += result;
-//             free(buf);
-            
-//         } else if (*p == '%' && *(p + 1) == 'C' && *(p + 2) == 'V') {
-
-//             p += 3;
-//             int arg = va_arg(args, int);
-//             int base = va_arg(args, int);
-//             if (base > 26 || base < 2) {
-//                 base = 10;
-//             }
-//             if ((buf = (char*)malloc(sizeof(char) * len)) == NULL) {
-//                 return 0;
-//             }
-            
-//             // from_10_to_big(arg, base, buf, &len);
-//             int result = fputs(buf, stream);
-//             if (result < 0) {
-//                 return result;
-//             }
-//             written += result;
-//             free(buf);
-            
-//         } else if (*p == '%' && *(p + 1) == 't' && *(p + 2) == 'o') {
-
-//             p += 3;
-//             char* arg = va_arg(args, char*);
-//             int base = va_arg(args, int);
-//             if (base > 26 || base < 2) {
-//                 base = 10;
-//             }
-//             int result = fprintf(stream, "%d", from_to_10(arg, base));
-//             if (result < 0) {
-//                 return result;
-//             }
-//             written += result;
-            
-//         } else if (*p == '%' && *(p + 1) == 'T' && *(p + 2) == 'O') {
-
-//             p += 3;
-//             char* arg = va_arg(args, char*);
-//             int base = va_arg(args, int);
-//             if (base > 26 || base < 2) {
-//                 base = 10;
-//             }
-//             int result = fprintf(stream, "%d", from_to_10_big(arg, base));
-//             if (result < 0) {
-//                 return result;
-//             }
-//             written += result;
-            
-//         } else {
-            
-//             written += 1;
-//             poz = 0;
-//             if ((buf = (char*)malloc(sizeof(char) * len)) == NULL) {
-//                 return 0;
-//             }
-//             buf[poz] = '%';
-//             poz += 1;
-
-//             while ((*(p + 1) != ' ') && (*(p + 1) != '%') && (*(p + 1) != '\0')) {
-//                 p += 1;
-//                 if (poz == (len - 2)) {
-//                     len *= 2;
-//                     if ((buf = (char*)realloc(buf, sizeof(char) * len)) == NULL) {
-//                         return 1;
-//                     }
-//                 }
-//                 buf[poz] = *p;
-//                 poz += 1;
-//             }
-//             p += 1;            
-
-//             buf[poz] = '\0';
-//             poz += 1;
-//             int sum = vfprintf(stream, buf, args);
-//             written += sum;
-//             free(buf);
-//         }
+int main(int argc, char * argv[]){
+    if (argc != 2){
+        printf("Invalid number of arguments\n");
+        return WRONG_INPUT;
     }
-    
-    va_end(args);
-    return written;
-}
-
-int oversscanf(char *stream, const char *format, ...) {
-
-}
-
-int main() {
-    int num;
+    int a = 0;
+    int b = overfscanf(stdin, "");
+    printf("%d %d\n", b, a);
+    char* input_file = argv[1];
+    FILE * file = fopen(input_file, "r");
+    if(file == NULL){
+        printf("Error of openning file.\n");
+        return ERROR_OF_FILE;
+    }
+    int num_int;
+    double num_double;
+    unsigned int num_unsigned;
+    int rom;
     int num1;
-    overfscanf(stdin, "qw %d %Ro\n", &num1, &num);
-
-    // char str[300];
-    // oversscanf(str, "%Ro\n", &num);
-    // printf("%s", str);
-
-    return 0;
+    int num2;
+    
+    char string[10];
+    int result = overfscanf(file, "%d %lf %s %Ro %Zr %CV %Cv", &num_int, &num_double, &string, &rom, &num_unsigned, &num1, 11 , &num2, 2);
+    if (result == ERROR){
+        printf("Error.\n");
+        fclose(file);
+        return result;
+    }
+    if (result == ERROR_OF_MEMORY){
+        printf("Error of memory.\n");
+        fclose(file);
+        return result;
+    }
+    printf("overfscanf\n");
+    printf("result: %d\nint: %d\ndouble: %lf\nstring: %s\nRo: %d\nZr: %d\nCV: %d\nCv: %d\n", result, num_int, num_double, string, rom, num_unsigned, num1, num2);
+    printf("\n");
+    
+    char * buf = "101 3.14 abcd XVI 10010011 B 1001";
+    result = oversscanf(buf, "%d %lf %s %Ro %Zr %CV %Cv", &num_int, &num_double, &string, &rom, &num_unsigned, &num1, 16 , &num2, 2);
+    if (result == ERROR_OF_FILE){
+        printf("Error.\n");
+        fclose(file);
+        return result;
+    }
+    if (result == ERROR_OF_MEMORY){
+        printf("Error.\n");
+        fclose(file);
+        return result;
+    }
+    printf("oversscanf\n");
+    printf("result: %d\nint: %d\ndouble: %lf\nstring: %s\nRo: %d\nZr: %d\nCV: %d\nCv: %d\n", result, num_int, num_double, string, rom, num_unsigned, num1, num2);
+    fclose(file);
+    return SUCCESS;
 }
