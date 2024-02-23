@@ -66,8 +66,8 @@ enum Status convertToCustomBase(const int number, const int base) {
 }
 
 int main() {
-    int number = -1001;
-    int r = 4;
+    int number = -1000100;
+    int r = 5;
 
     switch (convertToCustomBase(number, r)) {
         case INVALID_BASE:

@@ -85,31 +85,66 @@ void my_strcat(char* dest, const char *src) {
    *dest = '\0';
 }
 
-enum Status len_concut(char** str, char* ret, const int n, int len, int seed) {
-   srand(seed);
-   int indices[n];
-   int index, isDuplicate;
-   int ass = rand() % n;
-
-   for (int i = 0; i < n; i += 1) {
-      if (ass == i) {
-         my_strcat(ret, str[2]);
-      } else {
-         do {
-            index = rand() % (n -1);
-            isDuplicate = 0;
-            for (int j = 0; j < i + 1; j += 1) {
-               if (indices[j] == index) {
-                  isDuplicate = 1;
-                  break;
-               }
-            }
-         } while (isDuplicate);
-         indices[i + 1] = index;
-         my_strcat(ret, str[index + 4]);
-      }
+int get_size(const char *string) {
+   char const *start = string;
+   while (*string != '\0')
+   {
+      string++;
    }
-   
+   return string - start;
+}
+
+enum Status len_concut(char **result, char *prev_string, char* prev_arguments[], int size, unsigned int seed) {
+   srand(seed);
+   int length = 0;
+   int new_length = 0;
+   int string_length;
+   *result = (char*)malloc(sizeof(char) * length);
+   if (*result == NULL) return FILE_ERROR;
+
+   char** arguments = (char**)malloc(size * sizeof(char*) + 1);
+   if (arguments == NULL) return FILE_ERROR;
+
+   arguments[0] = prev_string;
+   for (int i = 1; i <= size; ++i)
+   {
+      arguments[i] = prev_arguments[i - 1];
+   }
+   size++;
+
+   char *string;
+   char *temp;
+   int a = 0, b = size - 1;
+
+   int index;
+
+   for (int i = 0; i < size - 1; ++i)
+   {
+      index = rand() % (size - i) + i;
+      temp = arguments[index];
+      arguments[index] = arguments[i];
+      arguments[i] = temp;
+   }
+   for (int i = 0; i < size; ++i)
+   {
+      string_length = get_size(arguments[i]);
+      new_length = length + string_length;
+      temp = (char*)realloc(*result, sizeof(char) * (new_length + 1));
+      if (temp == NULL)
+      {
+         free(*result);
+         *result = NULL;
+         return FILE_ERROR;
+      }
+      *result = temp;
+      for (int j = length, k = 0; j < new_length, k < string_length; ++j, ++k)
+      {
+         (*result)[j] = arguments[i][k];
+      }
+      (*result)[new_length] = '\0';
+      length = new_length;
+   }
+   free(arguments);
    return GOOD_ERROR;
 }
 
@@ -201,28 +236,22 @@ int main(int argc, char *argv[]) {
             return 0;
          }
 
-         int len_seed = atoi(argv[3]);
-         if (len_seed < 0) {
-            len_seed *= -1;
-         }
+         char *seed_string;
+         int seed;
+         char *new_string;
+         int result;
+         char *string = argv[2];
 
-         int l = strlen1(argv[2]);
-         int n = 1;
-         for (int i = 4; i < argc; i += 1) {
-            n += 1;
-            l += strlen1(argv[i]);
-         }
-
-         char* con;
-         if ((con = (char*)malloc(sizeof(char) * l + 1)) == NULL) {
+         seed = atoi(argv[3]);
+         new_string = NULL;
+         result = len_concut(&new_string, string, argv + 4, argc - 4, seed);
+         if (result == FILE_ERROR) {
             printf("Не смогли выделить память\n");
-            return 0;
+            free(new_string);
+            return result;
          }
-
-         len_concut(argv, con, n, l, len_seed);
-         printf("%s\n", con);
-
-         free(con);
+         printf("%s\n", new_string);
+         free(new_string);
          break;
       
       default:

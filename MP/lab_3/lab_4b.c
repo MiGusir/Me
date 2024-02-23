@@ -887,7 +887,7 @@ int Commands(int command, Post_ptr post, int * length){
 int main(){
     printf("Введите адрес получателя.\n");
     printf("Введите адрес формата: city street number of house building number of flat index\n");
-    printf("Пример: Москва Сталинская 3 - 23 11231\n");
+    printf("Пример: Moscow Lenina 11 - 28 121111\n");
     printf("Введите адрес: ");
     int size = 20;
     char city[size], street[size], building[size], index[size];

@@ -73,7 +73,7 @@ enum Status find_substring(const char* substring, int file_count, ...) {
 
 int main() {
 
-    const char* substring = "hello";
+    const char* substring = "\n";
 
     switch (find_substring(substring, 3, "1.txt", "2.txt", "3.txt")) {
 

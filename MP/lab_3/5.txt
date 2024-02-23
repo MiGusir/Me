@@ -1,0 +1,5 @@
+1 John Smith GroupA 85 90 93 87 91
+2 Emily Johnson GroupB 75 80 77 83 79
+3 David Brown GroupA 92 89 94 88 90
+4 Jessica Davis GroupC 80 82 85 78 84
+5 Michael Miller GroupB 88 85 90 86 92

@@ -112,7 +112,7 @@ int main() {
    int n = 3;
    int p = 1;
 
-   double vec1_data[] = {1.5, 2.0, 3.0};
+   double vec1_data[] = {1.5, -2.0, 3.0};
    double vec2_data[] = {-1.0, 0.7, 1.0};
    double vec3_data[] = {3.0, 2.12, 2.0};
 

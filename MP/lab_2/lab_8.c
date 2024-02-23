@@ -108,7 +108,7 @@ char* sumNumbers(int base, int count, ...) {
 }
 
 int main() {
-    char* result = sumNumbers(10, 3, "123", "251", "145");
+    char* result = sumNumbers(36, 3, "0", "ABOBA", "1");
     printf("%s\n", result);
     free(result);
 

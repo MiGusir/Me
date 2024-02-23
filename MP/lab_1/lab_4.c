@@ -131,92 +131,112 @@ int main(int argc, char* argv[]) {
                     FILE* file_d = fopen(sd, "w");
                     if (file_d == NULL) {
                         printf("Failed to open output file\n");
+                        fclose(input_file);
                         return 1;
                     }
                     flag_d(input_file, file_d);
                     fclose(file_d);
+                    fclose(input_file);
                     return 0;
                 case fl_nd:
                     if (argc < 4){
                         printf("Missing output file path\n");
+                        fclose(input_file);
                         return 1;
                     }
                     FILE* file_nd = fopen(argv[3], "w");
                     if (file_nd == NULL) {
                         printf("Failed to open output file\n");
+                        fclose(input_file);
                         return 1;
                     }
                     flag_d(input_file, file_nd);
                     fclose(file_nd);
+                    fclose(input_file);
                     return 0;
                 case fl_i:
                     out_name(argv[2], sd);
                     FILE* file_i = fopen(sd, "w");
                     if (file_i == NULL) {
                         printf("Failed to open output file\n");
+                        fclose(input_file);
                         return 1;
                     }
                     flag_i(input_file, file_i);
                     fclose(file_i);
+                    fclose(input_file);
                     return 0;
                 case fl_ni:
                     if (argc < 4){
                         printf("Missing output file path\n");
+                        fclose(input_file);
                         return 1;
                     }
                     FILE* file_ni = fopen(argv[3], "w");
                     if (file_ni == NULL) {
                         printf("Failed to open output file\n");
+                        fclose(input_file);
                         return 1;
                     }
                     flag_i(input_file, file_ni);
                     fclose(file_ni);
+                    fclose(input_file);
                     return 0;
                 case fl_s:
                     out_name(argv[2], sd);
                     FILE* file_s = fopen(sd, "w");
                     if (file_s == NULL) {
                         printf("Failed to open output file\n");
+                        fclose(input_file);
                         return 1;
                     }
                     flag_s(input_file, file_s);
                     fclose(file_s);
+                    fclose(input_file);
                     return 0;
                 case fl_ns:
                     if (argc < 4){
                         printf("Missing output file path\n");
+                        fclose(input_file);
                         return 1;
                     }
                     FILE* file_ns = fopen(argv[3], "w");
                     if (file_ns == NULL) {
                         printf("Failed to open output file\n");
+                        fclose(input_file);
                         return 1;
                     }
                     flag_s(input_file, file_ns);
                     fclose(file_ns);
+                    fclose(input_file);
                     return 0;
                 case fl_a:
                     out_name(argv[2], sd);
                     FILE* file_a = fopen(sd, "w");
                     if (file_a == NULL) {
                         printf("Failed to open output file\n");
+                        fclose(input_file);
                         return 0;
                     }
                     flag_a(input_file, file_a);
                     fclose(file_a);
+                    fclose(input_file);
                     return 0;
                 case fl_na:
                     if (argc < 4){
                         printf("Missing output file path\n");
+                        fclose(input_file);
                         return 1;
                     }
                     FILE* file_na = fopen(argv[3], "w");
                     if (file_na == NULL) {
                         printf("Failed to open output file\n");
+                        fclose(input_file);
                         return 1;
                     }
                     flag_a(input_file, file_na);
                     fclose(file_na);
+                    fclose(input_file);
                     return 0;
             }
             fclose(input_file);
