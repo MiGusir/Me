@@ -1,0 +1,1 @@
+expression 1: 10 * 1)() has error 'Invalid number of brackets'
