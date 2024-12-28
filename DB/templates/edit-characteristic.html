@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование характеристики</title>
+</head>
+<body>
+    <h1>Редактирование характеристики</h1>
+    <form method="POST" action="/edit-characteristic/{{ characteristic_id }}" enctype="multipart/form-data">
+        <label for="characteristic_type">Тип характеристики:</label>
+        <input type="text" name="characteristic_type" value="{{ characteristics[0][3] }}" required>
+        <br><br>
+        <label for="value">Значение:</label>
+        <input type="number" step="any" name="value" value="{{ characteristics[0][4] }}" required>
+        <br><br>
+        <label for="unit">Единица измерения:</label>
+        <input type="text" name="unit" value="{{ characteristics[0][5] }}" required>
+        <br><br>
+        <button type="submit">Обновить характеристику</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,43 @@
+Создать контейнер
+docker run --name my-postgres -p 9000:9000 -e POSTGRES_USER=myuser -e POSTGRES_PASSWORD=mypassword -e POSTGRES_DB=mydb -d postgres:latest
+
+Запуск контейнера
+docker start -a my-postgres
+
+Подключиться к бд
+docker exec -it my-postgres psql -U myuser -d mydb
+
+Список контейнеров
+docker ps -a
+
+Остановка контейнера
+docker stop my-postgres
+
+Удаление контейнера
+docker rm my-postgres
+
+Перенести файл в контейнер
+docker cp ./1.sql my-postgres:/1.sql
+Всю папку
+docker exec -it my-postgres rm -r /KP
+sudo docker cp ../KP my-postgres:/KP
+docker exec -it my-postgres psql -U myuser -d mydb -f /KP/1.sql
+
+Выполнить
+docker exec -it my-postgres psql -U myuser -d mydb -f /KP/test.sql
+
+docker exec -it my-postgres psql -U myuser -d mydb -c "\dt"
+
+Очистка бд
+docker exec -it my-postgres psql -U myuser -d mydb -c "DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;"
+
+
+docker stop my-postgres
+docker rm my-postgres
+docker run --name my-postgres -p 5440:5432  -e POSTGRES_USER=myuser -e POSTGRES_PASSWORD=mypassword -e POSTGRES_DB=mydb -d postgres:latest
+sudo docker cp ../KP my-postgres:/KP
+docker exec -it my-postgres psql -U myuser -d mydb -f /KP/test.sql
+
+
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' my-postgres

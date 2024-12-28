@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование отчёта</title>
+</head>
+<body>
+    <h1>Редактирование отчёта</h1>
+    <form method="POST" action="/edit-report/{{ report_id }}" enctype="multipart/form-data">
+        <label for="report_date">Дата отчёта:</label>
+        <input type="date" name="report_date" value="{{ reports[0][3] }}" required>
+        <br><br>
+        <label for="status">Статус:</label>
+        <input type="text" name="status" value="{{ reports[0][4] }}" required>
+        <br><br>
+        <label for="details">Подробности:</label>
+        <textarea rows="5" cols="80" style="resize: both;" name="details">{{ reports[0][5] }}</textarea>
+        <br><br>
+        <button type="submit">Обновить отчёт</button>
+    </form>
+</body>
+</html>

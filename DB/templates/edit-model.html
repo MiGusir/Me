@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование модели</title>
+</head>
+<body>
+    <h1>Редактирование модели</h1>
+    <form method="POST" action="/edit-model/{{ model_id }}" enctype="multipart/form-data">
+        <label for="model_name">Название модели:</label>
+        <input type="text" name="model_name" value="{{ models[0][2] }}" required>
+        <br><br>
+        <label for="manufacturer">Производитель:</label>
+        <input type="text" name="manufacturer" value="{{ models[0][3] }}" required>
+        <br><br>
+        <label for="launch_date">Дата запуска:</label>
+        <input type="date" name="launch_date" value="{{ models[0][4] }}" required>
+        <br><br>
+        <label for="description">Описание:</label>
+        <textarea rows="5" cols="80" style="resize: both;" name="description">{{ models[0][5] }}</textarea>
+        <br><br>
+        <button type="submit">Обновить модель</button>
+    </form>
+</body>
+</html>

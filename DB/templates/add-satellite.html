@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить спутник</title>
+</head>
+<body>
+    <form method="POST" action="/add-satellite" enctype="multipart/form-data">
+        <label for="name">Имя спутника:</label>
+        <input type="text" name="name" required>
+        <br><br>
+        <label for="model">Модель:</label>
+        <select name="model" id="models" style="width: 300px;">
+            {% for model in models %}
+                <option value="{{ model[0] }}">{{ model[2] }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <button type="submit">Добавить спутник</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Информация о моделях и спутниках</title>
+    <!-- Подключаем стили Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>    
+    
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullscreen Background Image</title>
+    <style>
+        body {
+            /* background-image: url('https://images.wallpaperscraft.ru/image/single/kosmos_zvezdy_tumannost_157030_3840x2400.jpg'); */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+        }
+    </style>
+<body>
+    <div class="fullscreen-bg"></div>
+</body>
+<style>
+    .alert-success {
+        background-color: #dff0d8;
+        color: #3c763d;
+        border: 1px solid #d6e9c6;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .alert-error {
+        background-color: #f2dede;
+        color: #a94442;
+        border: 1px solid #ebccd1;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+</style>
+</head>
+<div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <h2>Модели</h2>
+    <a class="btn btn-success" href="/add-model">Добавить модель</a>
+    <!-- <p>Модели: {{ models }}</p> -->
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Производитель</th>
+                <th>Дата</th>
+                <th>Описание</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for model in models %}
+            <tr>
+                <td>{{ model[2] }}</td>
+                <td>{{ model[3] }}</td>
+                <td>{{ model[4] }}</td>
+                <td>{{ model[5] }}</td>
+                <td>
+                    <a class="btn btn-warning" href="/edit-model/{{ model[0] }}">Изменить</a>
+                    <form action="/delete-model/{{ model[0] }}" method="post">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="submit" value="Удалить" class="btn btn-danger">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h1>Спутники</h1>
+    <a class="btn btn-success" href="/add-satellite">Добавить спутник</a>
+    <!-- <p>{{ satellites }}</p> -->
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Модель</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for satellite in satellites %}
+            <tr>
+                <td>{{ satellite[2] }}</td>
+                <td>{% for model in models %}
+                    {% if model[0] == satellite[3] %}
+                        {{ model[2] }}
+                    {% endif %}
+                {% endfor %}</td>
+                <td>
+                    <a class="btn btn-warning" href="/edit-satellite/{{ satellite[0] }}">Изменить</a>
+                    <form action="/delete-satellite/{{ satellite[0] }}" method="post">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="submit" value="Удалить" class="btn btn-danger">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h2>Характеристики</h2>
+    <a class="btn btn-success" href="/add-characteristic">Добавить характеристику</a>
+    <!-- <p>Характеристики: {{ characteristics }}</p> -->
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Спутник</th>
+                <th>Тип характеристики</th>
+                <th>Значение</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for characteristic in characteristics %}
+            <tr>
+                <td>{% for satellite in satellites %}
+                    {% if satellite[0] == characteristic[2] %}
+                        {{ satellite[2] }}
+                    {% endif %}
+                {% endfor %}</td>
+                <td>{{ characteristic[3] }}</td>
+                <td>{{ characteristic[4] }} {{ characteristic[5] }}</td>
+                <td>
+                    <a class="btn btn-warning" href="/edit-characteristic/{{ characteristic[0] }}">Изменить</a>
+                    <form action="/delete-characteristic/{{ characteristic[0] }}" method="post">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="submit" value="Удалить" class="btn btn-danger">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h2>Траектории</h2>
+    <a class="btn btn-success" href="/add-trajectorie">Добавить траекторию</a>
+    <!-- <p>Траектории: {{ trajectories }}</p> -->
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Спутник</th>
+                <th>Данные траектории</th>
+                <th>Начало</th>
+                <th>Конец</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for trajectory in trajectories %}
+            <tr>
+                <td>{% for satellite in satellites %}
+                    {% if satellite[0] == trajectory[2] %}
+                        {{ satellite[2] }}
+                    {% endif %}
+                {% endfor %}</td>
+                <td>{{ trajectory[3] }}</td>
+                <td>{{ trajectory[4] }}</td>
+                <td>{{ trajectory[5] }}</td>
+                <td>
+                    <a class="btn btn-warning" href="/edit-trajectory/{{ trajectory[0] }}">Изменить</a>
+                    <form action="/delete-trajectory/{{ trajectory[0] }}" method="post">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="submit" value="Удалить" class="btn btn-danger">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h2>Отчёты</h2>
+    <a class="btn btn-success" href="/add-report">Добавить отчёты</a>
+    <!-- <p>Отчёты: {{ reports }}</p> -->
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Дата отчёта</th>
+                <th>Статус</th>
+                <th>Детали</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report in reports %}
+            <tr>
+                <td>{{ report[3] }}</td>
+                <td>{{ report[4] }}</td>
+                <td>{{ report[5] }}</td>
+                <td>
+                    <a class="btn btn-warning" href="/edit-report/{{ report[0] }}">Изменить</a>
+                    <form action="/delete-report/{{ report[0] }}" method="post">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="submit" value="Удалить" class="btn btn-danger">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p><a href="/">Назад на главную</a></p>
+</body>
+</html>

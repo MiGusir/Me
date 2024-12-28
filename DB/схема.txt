@@ -1,0 +1,65 @@
+@startuml
+together {
+    class Users
+}
+
+class Users {
+    id
+    username
+    password_hash
+    created_at
+}
+
+class Models {
+    id
+    model_name
+    manufacturer
+    launch_date
+    description
+}
+
+class Satellites {
+    id
+    user_id
+    model_id
+    name
+}
+
+class Characteristics {
+    id
+    user_id
+    satellite_id
+    characteristic_type
+    value
+    unit
+}
+
+class Trajectories {
+    id
+    user_id
+    satellite_id
+    trajectory_data
+    start_time
+    end_time
+}
+
+class Reports {
+    id
+    user_id
+    satellite_id
+    report_date
+    status
+    details
+}
+
+Users -> Models
+Users -> Satellites
+Users -> Characteristics
+Users -> Trajectories
+Users -> Reports
+Models ---> Satellites
+Satellites ---> Characteristics
+Satellites ---> Trajectories
+Satellites ---> Reports
+
+@enduml

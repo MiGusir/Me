@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавление отчета о спутнике</title>
+</head>
+<body>
+    <form method="POST" action="/add-report" enctype="multipart/form-data">
+        <label for="satellite_id">ID Спутника:</label>
+        <select name="satellite_id" id="satellite_id" style="width: 300px;">
+            {% for satellite in satellites %}
+                <option value="{{ satellite[0] }}">{{ satellite[2] }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <label for="report_date">Дата отчета:</label>
+        <input type="date" name="report_date" required>
+        <br><br>
+        <label for="status">Статус:</label>
+        <select id="status" name="status" required>
+            <option value="">Выберите статус</option>
+            <option value="OK">OK</option>
+            <option value="FAIL">FAIL</option>
+            <option value="IN_PROGRESS">IN_PROGRESS</option>
+        </select>
+        <br><br>
+        <label for="details">Подробности:</label>
+        <textarea rows="10" cols="60" name="details" required></textarea>
+        <br><br>
+        <button type="submit">Добавить отчет</button>
+    </form>
+</body>
+</html>

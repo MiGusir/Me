@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование траектории</title>
+</head>
+<body>
+    <h1>Редактирование траектории</h1>
+    <form method="POST" action="/edit-trajectory/{{ trajectory_id }}" enctype="multipart/form-data">
+        <label for="trajectory_data">Данные траектории (JSON):</label>
+        <textarea rows="10" cols="60" style="resize: both;" name="trajectory_data">{{ trajectories[0][3] }}</textarea>
+        <br><br>
+        <label for="start_time">Время начала:</label>
+        <input type="datetime-local" name="start_time" value="{{ trajectories[0][4] }}" required>
+        <br><br>
+        <label for="end_time">Время окончания:</label>
+        <input type="datetime-local" name="end_time" value="{{ trajectories[0][5] }}" required>
+        <br><br>
+        <button type="submit">Обновить траекторию</button>
+    </form>
+</body>
+</html>

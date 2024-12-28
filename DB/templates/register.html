@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+</head>
+<style>
+    .alert-success {
+        background-color: #dff0d8;
+        color: #3c763d;
+        border: 1px solid #d6e9c6;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .alert-error {
+        background-color: #f2dede;
+        color: #a94442;
+        border: 1px solid #ebccd1;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+</style>
+<body>
+    <h1>Регистрация</h1>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <form action="" method="post">
+        <label for="username">Имя пользователя:</label>
+        <input type="text" id="username" name="username"><br><br>
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password"><br><br>
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+    <a href="/">Назад на главную</a>
+</body>
+</html>

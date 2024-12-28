@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить модель спутника</title>
+</head>
+<body>
+    <form method="POST" action="/add-model" enctype="multipart/form-data">
+        <label for="model_name">Название модели:</label>
+        <input type="text" name="model_name" required>
+        <br><br>
+        <label for="manufacturer">Производитель:</label>
+        <input type="text" name="manufacturer" required>
+        <br><br>
+        <label for="launch_date">Дата выпуска:</label>
+        <input type="date" name="launch_date" placeholder="YYYY-MM-DD" required>
+        <br><br>
+        <label for="description">Описание:</label>
+        <textarea rows="5" cols="80" style="resize: both;" name="description" required></textarea>
+        <br><br>
+        <button type="submit">Добавить модель</button>
+    </form>
+</body>
+</html>
