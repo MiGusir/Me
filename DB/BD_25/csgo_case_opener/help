@@ -1,0 +1,34 @@
+Запуск
+docker compose up --build
+docker compose up -d
+
+sudo docker-compose up --build
+
+Остановка
+docker compose down -v
+
+Тестирование через сваггер
+http://localhost:8000/docs
+
+PSQL
+docker exec -it csgo_case_opener_postgres_1 psql -U postgres -d csgo
+SELECT * FROM users
+SELECT * FROM cases
+SELECT * FROM items
+SELECT * FROM inventory
+
+Redis
+docker exec -it csgo_case_opener_redis_1 redis-cli
+GET "last_case_open:1"
+exit
+
+Mongo
+docker exec -it csgo_case_opener_mongo_1 mongosh -u root -p example
+use csgo
+db.users.find()
+
+
+PostgreSQL для хранения основной информации (пользователи, кейсы, предметы, инвентарь)
+Redis для кэширования результатов последнего открытия кейса
+MongoDB для хранения статистики пользователей
+Swagger для документации API
