@@ -1,0 +1,6 @@
+org/example/studentcrud/service/StudentService.class
+org/example/studentcrud/repository/StudentRepository.class
+org/example/studentcrud/service/StudentServiceImpl.class
+org/example/studentcrud/StudentCrudApplication.class
+org/example/studentcrud/model/Student.class
+org/example/studentcrud/controller/StudentController.class
