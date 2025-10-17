@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    depends_on:
+      - rabbitmq
+    volumes:
+      - ./backend:/app
+    command: >
+      sh -c "cd /app && 
+             g++ -O3 -std=c++11 encryption/rc5.cpp -o encryption/rc5 &&
+             g++ -O3 -std=c++11 encryption/diff.cpp -o encryption/diff && 
+             g++ -O3 -std=c++11 encryption/magenta.cpp -o encryption/magenta &&
+             python main.py"
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
