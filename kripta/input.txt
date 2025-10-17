@@ -1,0 +1,3 @@
+Hello, this is a test message for RC5 encryption!
+This is the second line of the test file.
+RC5 is a symmetric key block cipher known for its simplicity and security.
